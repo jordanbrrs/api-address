@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import jordanbrrs.apiaddress.model.Address;
+import jordanbrrs.apiaddress.model.ResultResponse;
 
 @Service
 public class AddressService {
@@ -36,13 +37,16 @@ public class AddressService {
 		return Long.valueOf(value);
 	}
 	
-	public boolean Create(JSONObject jsonAddress) {	
+	public ResultResponse Create(JSONObject jsonAddress) {
+		ResultResponse response = new ResultResponse();
 		Address address = CreateObjectAddress(jsonAddress);
-		if(address != null && ValidateAddress(address)) {
-			return InsertAddress(address);
+		response = ValidateAddress(address);
+		if(address != null && response.getSuccess()) {
+			InsertAddress(address);
 		} else {
-			return false;	
+			response.AddError("Não foi possível inserir endereço.");
 		}
+		return response;
 	}
 	
 	public boolean Update(Long ID, JSONObject jsonAddress) {
@@ -64,8 +68,42 @@ public class AddressService {
 		}
 	}
 	
-	private boolean ValidateAddress(Address address) {
-		return true;
+	private ResultResponse ValidateAddress(Address address) {
+		ResultResponse response = new ResultResponse();
+		
+		if(address.getID() <= 0) {
+			response.AddError("ID é obrigatório e deve ser naior que 0.");
+		}
+		
+		if(address.getStreetName().trim().length() == 0) {
+			response.AddError("Nome da rua é obrigatório.");
+		}
+		
+		if(address.getNumber().trim().length() == 0) {
+			response.AddError("Número da rua é obrigatório.");
+		}
+		
+		if(address.getNeighbourhood().trim().length() == 0) {
+			response.AddError("Bairro é obrigatório.");
+		}
+		
+		if(address.getCity().trim().length() == 0) {
+			response.AddError("Cidade é obrigatória.");
+		}
+		
+		if(address.getState().trim().length() == 0) {
+			response.AddError("Estado é obrigatório.");
+		}
+		
+		if(address.getCountry().trim().length() == 0) {
+			response.AddError("País é obrigatório.");
+		}
+		
+		if(address.getZipcode().trim().length() == 0) {
+			response.AddError("CEP é obrigatório.");
+		}
+		
+		return response;
 	}
 	
 	private Address CreateObjectAddress(JSONObject jsonAddress) {
@@ -79,7 +117,7 @@ public class AddressService {
 	}
 	
 	private void ConvertoJSONToAddress(JSONObject jsonAddress, Address address) {
-		address.setID(jsonAddress.get("id") != null ? parseId(jsonAddress.get("id").toString()) : address.getID() );
+		address.setID(jsonAddress.get("id") != null ? parseId(jsonAddress.get("id").toString()) : address.getID());
 		address.setStreetName(jsonAddress.get("streetName") != null ? jsonAddress.get("streetName").toString() : address.getStreetName() );
 		address.setNumber(jsonAddress.get("number") != null ? jsonAddress.get("number").toString() : address.getNumber() );
 		address.setComplement(jsonAddress.get("complement") != null ? jsonAddress.get("complement").toString() : address.getComplement() );
