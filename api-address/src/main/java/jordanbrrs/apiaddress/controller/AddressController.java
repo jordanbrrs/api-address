@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import jordanbrrs.apiaddress.model.Address;
+import jordanbrrs.apiaddress.model.ResultResponse;
 import jordanbrrs.apiaddress.service.AddressService;
 
 @RestController
@@ -31,11 +32,11 @@ public class AddressController {
 	
 	@PostMapping(path = "/address")
 	@ResponseBody
-	public ResponseEntity<Boolean> create(@RequestBody JSONObject jsonAddress) {
+	public ResponseEntity<ResultResponse> create(@RequestBody JSONObject jsonAddress) {
 		try {
 			if(addressService.isJSONValid(jsonAddress.toString())) {
-				boolean addressCreated = addressService.Create(jsonAddress);							
-				return ResponseEntity.ok(addressCreated);
+				ResultResponse response = addressService.Create(jsonAddress);							
+				return ResponseEntity.ok(response);
 			
 			}else {
 				return ResponseEntity.badRequest().body(null);

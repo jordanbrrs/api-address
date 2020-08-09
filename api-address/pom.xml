@@ -40,7 +40,7 @@
 		    <groupId>com.googlecode.json-simple</groupId>
 		    <artifactId>json-simple</artifactId>
 		    <version>${json.simple.version}</version><!--$NO-MVN-MAN-VER$-->
-		</dependency>
+		</dependency>				
 	</dependencies>
 
 	<build>
